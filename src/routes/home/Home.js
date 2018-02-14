@@ -9,41 +9,84 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import history from '../../history';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 
 class Home extends React.Component {
   static propTypes = {
-    news: PropTypes.arrayOf(
+    persons: PropTypes.arrayOf(
       PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        link: PropTypes.string.isRequired,
-        content: PropTypes.string,
+        id: PropTypes.number,
+        first_name: PropTypes.string,
+        last_name: PropTypes.string,
+        email: PropTypes.string,
+        gender: PropTypes.string,
+        ip_address: PropTypes.string
       }),
-    ).isRequired,
+    ),
   };
 
+  constructor(props) {
+    super(props);
+
+    this.goToAddPerson = this.goToAddPerson.bind(this);
+    this.onSearchStringChanged = this.onSearchStringChanged.bind(this);
+
+    this.state = {
+      searchString: '',
+    };
+  }
+
+  goToAddPerson() {
+    history.push('/add-person');
+  }
+
+  onSearchStringChanged(event) {
+    this.setState({searchString: event.target.value});
+  }
+
   render() {
+    const { persons } = this.props;
+    const { searchString } = this.state;
+    const result = persons.filter(person => person.first_name.toLowerCase().indexOf(searchString.toLowerCase()) > -1);
+
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>React.js News</h1>
-          {this.props.news.map(item => (
-            <article key={item.link} className={s.newsItem}>
-              <h1 className={s.newsTitle}>
-                <a href={item.link}>{item.title}</a>
-              </h1>
-              <div
-                className={s.newsDesc}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: item.content }}
-              />
-            </article>
-          ))}
+          <h1>Upstack Test</h1>
+          <div>
+            <button onClick={this.goToAddPerson}>Add Person</button>
+          </div>
+          <br />
+          <input type="text" onChange={this.onSearchStringChanged} />
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>First Name</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.map((item, index) => (
+                <tr key={item.id}>
+                  <td>{index + 1}</td>
+                  <td>{item.first_name}</td>
+                  <td>{item.email}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );
   }
 }
 
-export default withStyles(s)(Home);
+const mapState = state => ({
+  persons: state.person.persons,
+});
+
+export default connect(mapState, null)(withStyles(s)(Home));

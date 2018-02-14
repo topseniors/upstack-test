@@ -8,23 +8,18 @@
  */
 
 import React from 'react';
-import Home from './Home';
 import Layout from '../../components/Layout';
+import AddPersonComponent from './AddPersonComponent';
 
-async function action({ fetch }) {
-  const resp = await fetch('/graphql', {
-    body: JSON.stringify({
-      query: '{news{title,link,content}}',
-    }),
-  });
-  // const { data } = await resp.json();
-  // if (!data || !data.news) throw new Error('Failed to load the news feed.');
+const title = 'Add Person';
 
+function action() {
   return {
-    title: 'React Starter Kit',
+    chunks: ['add-person'],
+    title,
     component: (
       <Layout>
-        <Home />
+        <AddPersonComponent title={title} />
       </Layout>
     ),
   };
