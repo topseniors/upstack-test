@@ -29,6 +29,8 @@ import router from './router';
 import models from './data/models';
 import schema from './data/schema';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
+import configureStore from './store/configureStore';
+import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
 
 process.on('unhandledRejection', (reason, p) => {
@@ -139,6 +141,22 @@ app.get('*', async (req, res, next) => {
       graphql,
     });
 
+    const initialState = {
+      user: req.user || null,
+    };
+
+    const store = configureStore(initialState, {
+      fetch,
+      // I should not use `history` on server.. but how I do redirection? follow universal-router
+    });
+
+    store.dispatch(
+      setRuntimeVariable({
+        name: 'initialNow',
+        value: Date.now(),
+      }),
+    );
+
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {
@@ -147,6 +165,9 @@ app.get('*', async (req, res, next) => {
       // The twins below are wild, be careful!
       pathname: req.path,
       query: req.query,
+      // You can access redux through react-redux connect
+      store,
+      storeSubscription: null,
     };
 
     const route = await router.resolve(context);
@@ -168,6 +189,7 @@ app.get('*', async (req, res, next) => {
     data.scripts.push(assets.client.js);
     data.app = {
       apiUrl: config.api.clientUrl,
+      state: context.store.getState(),
     };
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
