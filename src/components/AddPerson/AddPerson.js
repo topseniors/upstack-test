@@ -16,6 +16,7 @@ class AddPersonPanel extends React.Component {
 
     this.onSubmit = this.onSubmit.bind(this);
     this.onCancel = this.onCancel.bind(this);
+    this.history = history;
 
     this.state = {
       first_name: '',
@@ -37,24 +38,52 @@ class AddPersonPanel extends React.Component {
   }
 
   onCancel() {
-    history.goBack();
+    this.history.goBack();
   }
 
   render() {
     return (
       <div>
-        <input type="text" placeholder="First Name" onChange={(event) => { this.onFieldChange('first_name', event.target.value); }} />
+        <input
+          type="text"
+          placeholder="First Name"
+          onChange={event => {
+            this.onFieldChange('first_name', event.target.value);
+          }}
+        />
         <br />
-        <input type="text" placeholder="Last Name" onChange={(event) => { this.onFieldChange('last_name', event.target.value); }} />
+        <input
+          type="text"
+          placeholder="Last Name"
+          onChange={event => {
+            this.onFieldChange('last_name', event.target.value);
+          }}
+        />
         <br />
-        <input type="text" placeholder="Email" onChange={(event) => { this.onFieldChange('email', event.target.value); }} />
+        <input
+          type="text"
+          placeholder="Email"
+          onChange={event => {
+            this.onFieldChange('email', event.target.value);
+          }}
+        />
         <br />
-        <select onChange={(event) => { this.onFieldChange('gender', event.target.value); }}>
+        <select
+          onChange={event => {
+            this.onFieldChange('gender', event.target.value);
+          }}
+        >
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
         <br />
-        <input type="text" placeholder="Ip Address" onChange={(event) => { this.onFieldChange('ip_address', event.target.value); }} />
+        <input
+          type="text"
+          placeholder="Ip Address"
+          onChange={event => {
+            this.onFieldChange('ip_address', event.target.value);
+          }}
+        />
         <br />
         <button onClick={this.onSubmit}>Submit</button>
         <button onClick={this.onCancel}>Cancel</button>

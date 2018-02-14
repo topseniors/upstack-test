@@ -10,8 +10,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import history from '../../history';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import history from '../../history';
 import s from './Home.css';
 
 class Home extends React.Component {
@@ -23,9 +23,9 @@ class Home extends React.Component {
         last_name: PropTypes.string,
         email: PropTypes.string,
         gender: PropTypes.string,
-        ip_address: PropTypes.string
+        ip_address: PropTypes.string,
       }),
-    ),
+    ).isRequired,
   };
 
   constructor(props) {
@@ -33,24 +33,29 @@ class Home extends React.Component {
 
     this.goToAddPerson = this.goToAddPerson.bind(this);
     this.onSearchStringChanged = this.onSearchStringChanged.bind(this);
+    this.history = history;
 
     this.state = {
       searchString: '',
     };
   }
 
-  goToAddPerson() {
-    history.push('/add-person');
+  onSearchStringChanged(event) {
+    this.setState({ searchString: event.target.value });
   }
 
-  onSearchStringChanged(event) {
-    this.setState({searchString: event.target.value});
+  goToAddPerson() {
+    this.history.push('/add-person');
   }
 
   render() {
     const { persons } = this.props;
     const { searchString } = this.state;
-    const result = persons.filter(person => person.first_name.toLowerCase().indexOf(searchString.toLowerCase()) > -1);
+    const result = persons.filter(
+      person =>
+        person.first_name.toLowerCase().indexOf(searchString.toLowerCase()) >
+        -1,
+    );
 
     return (
       <div className={s.root}>
